@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+coverage/
+*.log
+.env
+.DS_Store
+baseline.log
+orbittasks.db
+# Local file-backed DB written by `npm run seed` / the playground runner.
+.data/
+apps/*/.data/

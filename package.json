@@ -1,0 +1,26 @@
+{
+  "name": "orbittasks",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OrbitTasks SaaS — Build Fellowship sample project.",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces --include-workspace-root",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspace=apps/api && npm run test --workspace=apps/web",
+    "build": "npm run build --workspace=apps/api && npm run build --workspace=apps/web",
+    "deploy": "bash scripts/deploy.sh",
+    "ci": "bash scripts/measure.sh",
+    "analyze-baseline": "node scripts/analyze-baseline.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "tsx": "^4.7.1"
+  }
+}

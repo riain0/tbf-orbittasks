@@ -1,0 +1,72 @@
+# OrbitTasks CI — Baseline workflow.
+#
+# NOTE for fellows:
+# This workflow is DELIBERATELY slow. It is what OrbitTasks would have
+# inherited if the engineering team had set up CI three years ago and
+# never revisited it. Workshop 3 students improve this file in place,
+# one optimization at a time, with the recipe in
+# workshops/03-cicd/optimization-recipe.md.
+#
+# What's slow on purpose, in this file specifically:
+#   - No dependency caching (no `cache: npm`).
+#   - No matrix strategy (api and web run sequentially in one job).
+#   - No sharding (test files run one after another).
+#   - No incremental TypeScript build (tsconfig also enforces this).
+#   - Coverage is collected on every PR (jest.config.js enforces this).
+#   - Deploy script copies files one at a time (scripts/deploy.sh).
+#
+# Each of those is fixed by a corresponding step in the recipe doc.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    name: Build, lint, test, deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # No `cache: npm` here on purpose — Workshop 3 Step 1 adds it.
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Test (api)
+        run: npm run test --workspace=apps/api
+
+      - name: Test (web)
+        run: npm run test --workspace=apps/web
+
+      - name: Build (api)
+        run: npm run build --workspace=apps/api
+
+      - name: Build (web)
+        run: npm run build --workspace=apps/web
+
+      - name: Deploy (simulated)
+        run: npm run deploy
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ github.run_id }}
+          path: apps/api/coverage
+          retention-days: 7
