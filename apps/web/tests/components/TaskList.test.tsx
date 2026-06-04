@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { TaskList } from '../../src/components/TaskList';
+import { TaskList, visibleRange } from '../../src/components/TaskList';
 import type { Task } from '../../src/api/tasks';
 
 function makeTasks(n: number): Task[] {
@@ -35,21 +35,34 @@ describe('TaskList', () => {
     });
   });
 
-  // ⚠️ SLOW TEST.
-  //
-  // This test renders a TaskList with 500 entries. The React reconciler,
-  // jsdom layout, and per-card test ID indexing all add up — the test
-  // takes 1.5–3 seconds on a modern laptop, mostly in legitimate work.
-  //
-  // Workshop 2 students will identify this as a slow test.
-  // Workshop 5 students will replace it with a smaller render plus a
-  // unit test for the list-virtualization logic — once the component
-  // is taught to virtualize its output.
-  //
-  // The remediation gets walked through together in Workshop 5's
-  // live-demo, not as solo work.
-  it('renders a long list of tasks', () => {
+  // W5 step 4: the old test rendered 500 cards (~2s of legitimate DOM work).
+  // Now the component virtualizes, so a long list mounts only a window. We
+  // assert the window is small instead of forcing 500 nodes, and unit-test
+  // the window math directly — same coverage, milliseconds instead of seconds.
+  it('virtualizes a long list (renders a window, not every card)', () => {
     render(<TaskList tasks={makeTasks(500)} />);
-    expect(screen.getAllByTestId('task-card')).toHaveLength(500);
+    const cards = screen.getAllByTestId('task-card');
+    expect(cards.length).toBeGreaterThan(0);
+    expect(cards.length).toBeLessThan(500);
+  });
+});
+
+describe('visibleRange', () => {
+  it('returns a small window for a large list at the top', () => {
+    const { start, end } = visibleRange(0, 480, 72, 500, 3);
+    expect(start).toBe(0);
+    expect(end).toBeLessThan(500);
+    expect(end).toBeGreaterThan(0);
+  });
+
+  it('advances the window as the list scrolls', () => {
+    const top = visibleRange(0, 480, 72, 500, 3);
+    const scrolled = visibleRange(7200, 480, 72, 500, 3);
+    expect(scrolled.start).toBeGreaterThan(top.start);
+  });
+
+  it('never runs past the end of the list', () => {
+    const { end } = visibleRange(999999, 480, 72, 500, 3);
+    expect(end).toBe(500);
   });
 });
