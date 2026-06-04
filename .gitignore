@@ -10,3 +10,4 @@ orbittasks.db
 # Local file-backed DB written by `npm run seed` / the playground runner.
 .data/
 apps/*/.data/
+**/.tsbuildinfo
