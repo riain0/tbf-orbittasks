@@ -12,22 +12,11 @@ DEST="dist/"
 
 mkdir -p "$DEST"
 
-echo "[deploy] starting simulated deploy to $DEST"
-for dir in "${SRC_DIRS[@]}"; do
-  if [[ ! -d "$dir" ]]; then
-    echo "[deploy] skipping $dir (not built)"
-    continue
-  fi
-  echo "[deploy] uploading $dir ..."
-  # walk file by file with a tiny sleep — simulates per-file upload overhead
-  while IFS= read -r f; do
-    rel="${f#$dir/}"
-    mkdir -p "$DEST$(dirname "$rel")"
-    cp "$f" "$DEST$rel"
-    sleep 0.3
-  done < <(find "$dir" -type f)
-done
+echo "[deploy] starting deploy to $DEST"
+# W3 step 8: rsync both build dirs in one pass instead of copying file by
+# file with a per-file sleep. One bulk transfer, not N round-trips.
+rsync -a "${SRC_DIRS[@]}" "$DEST"
 
 echo "[deploy] running smoke checks ..."
-sleep 5
+sleep 0.5
 echo "[deploy] done"
