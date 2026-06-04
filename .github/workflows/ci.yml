@@ -39,6 +39,14 @@ jobs:
           node-version: 20
           cache: npm   # W3 step 1: restore ~/.npm from the lockfile hash
 
+      - name: Cache TypeScript build info   # W3 step 2
+        uses: actions/cache@v4
+        with:
+          path: '**/.tsbuildinfo'
+          key: tsbuildinfo-${{ hashFiles('**/*.ts') }}
+          restore-keys: |
+            tsbuildinfo-
+
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
