@@ -28,16 +28,17 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./tests/setup.ts'],
 
-    // SLOW: serial single-fork pool.
+    // W3 step 4: allow multiple forks (was singleFork: true). Flip BOTH
+    // knobs — leaving isolate:true still re-creates jsdom per file.
     pool: 'forks',
     poolOptions: {
       forks: {
-        singleFork: true,
+        singleFork: false,
       },
     },
 
-    // SLOW: full isolation between test files.
-    isolate: true,
+    // W3 step 4: reuse the jsdom environment across files (was isolate:true).
+    isolate: false,
 
     // W3 step 3: coverage off the PR path; run it nightly instead.
     coverage: {
