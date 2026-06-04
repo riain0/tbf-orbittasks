@@ -1,25 +1,10 @@
 # OrbitTasks Architecture
 
-## Overview
+OrbitTasks is a TypeScript monorepo with two apps:
 
-OrbitTasks is a task management SaaS built on a Postgres + Node + React stack.
+- `apps/api/`: Node.js + Express backend, file-backed JSON store (JSON file via `DATABASE_URL`; in-memory only under tests).
+- `apps/web/`: React + Vite frontend.
 
-## Components
+External services are mocked in tests via `scripts/mock-server.js`.
 
-- **API**: Express + TypeScript, connected to Postgres via Prisma.
-- **Web**: React frontend served from S3.
-- **Workers**: Background job queue (BullMQ) for notifications.
-
-## Local development
-
-Run `docker-compose up` to start Postgres locally, then `npm run dev`.
-
-## Deployment
-
-Production runs on AWS ECS with Fargate. RDS for the database. CloudFront for the web app.
-
----
-
-*TODO: update for the new SQLite-backed setup.*
-*TODO: document the actual deploy process.*
-*TODO: remove references to Prisma — we ripped it out.*
+For deeper detail see the per-app READMEs.
