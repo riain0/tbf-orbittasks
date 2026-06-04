@@ -39,9 +39,9 @@ export default defineConfig({
     // SLOW: full isolation between test files.
     isolate: true,
 
-    // SLOW: coverage on every run.
+    // W3 step 3: coverage off the PR path; run it nightly instead.
     coverage: {
-      enabled: true,
+      enabled: false,
       provider: 'v8',
       reporter: ['text', 'lcov'],
       reportsDirectory: './coverage',
