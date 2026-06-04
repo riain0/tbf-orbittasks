@@ -71,6 +71,10 @@ describe('Login page', () => {
   // condition. Workshop 5 students fix it together with the Fellow during
   // the live-demo by replacing the fixed sleep with
   // `await waitFor(() => expect(onSuccess).toHaveBeenCalled())`.
+  // W5 step 6 (was flaky): the request resolves after a random 0-30ms delay,
+  // and the old test slept a fixed 15ms before asserting — so it failed
+  // whenever the request landed after the guess. Fix: wait for the condition
+  // with `waitFor` instead of guessing how long async work takes.
   it('signs in once the request resolves', async () => {
     globalThis.fetch = vi.fn().mockImplementation(
       () =>
@@ -94,8 +98,6 @@ describe('Login page', () => {
     fireEvent.change(screen.getByLabelText('email'), { target: { value: 'a@b.co' } });
     fireEvent.change(screen.getByLabelText('password'), { target: { value: 'hunter22' } });
     fireEvent.click(screen.getByTestId('login-submit'));
-    // BUG: fixed-time guess instead of waiting for the condition.
-    await new Promise((r) => setTimeout(r, 15));
-    expect(onSuccess).toHaveBeenCalled();
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled());
   });
 });
