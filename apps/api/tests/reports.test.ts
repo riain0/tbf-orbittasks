@@ -38,19 +38,25 @@ describe('reports', () => {
     expect(done).toHaveLength(2);
   });
 
-  // FLAKY TEST.
-  // Races a randomized timer (50–250 ms) against a fixed 150ms timer.
-  // Passes only when the random side beats the fixed side — roughly 50%
-  // of the time. Workshop 2 students will identify this as a
-  // timing-dependent race condition.
+  // W2 FIX (was flaky): the original raced a randomized 50–250 ms timer
+  // against a fixed 150 ms timer, so it passed ~50% of the time. Root cause
+  // (5 Whys, W2): the assertion depended on real wall-clock ordering.
+  // Fix: drive the clock with fake timers so the "fast" path always resolves
+  // before the deadline. Deterministic on every run.
   it('processes async events within budget', async () => {
-    const fast = new Promise<string>((r) => {
-      setTimeout(() => r('fast'), 50 + Math.random() * 200);
-    });
-    const slow = new Promise<string>((r) => {
-      setTimeout(() => r('slow'), 150);
-    });
-    const winner = await Promise.race([fast, slow]);
-    expect(winner).toBe('fast');
+    jest.useFakeTimers();
+    try {
+      const fast = new Promise<string>((r) => {
+        setTimeout(() => r('fast'), 50);
+      });
+      const slow = new Promise<string>((r) => {
+        setTimeout(() => r('slow'), 150);
+      });
+      const race = Promise.race([fast, slow]);
+      await jest.advanceTimersByTimeAsync(50);
+      expect(await race).toBe('fast');
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });
