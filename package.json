@@ -14,13 +14,26 @@
     "build": "npm run build --workspace=apps/api && npm run build --workspace=apps/web",
     "deploy": "bash scripts/deploy.sh",
     "ci": "bash scripts/measure.sh",
-    "analyze-baseline": "node scripts/analyze-baseline.js"
+    "analyze-baseline": "node scripts/analyze-baseline.js",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20"
   },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml}": [
+      "prettier --write"
+    ]
+  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.3",
     "tsx": "^4.7.1",
     "typescript": "^5.4.5"
   }
