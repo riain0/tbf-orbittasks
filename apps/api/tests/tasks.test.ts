@@ -51,27 +51,26 @@ describe('tasks service', () => {
     expect(findTask(999)).toBeUndefined();
   });
 
-  // ⚠️ FLAKY TEST (≈50% failure rate).
-  //
-  // Simulates a debounced "auto-save" that flushes the task after a
-  // randomised 50–250 ms delay, and asserts the flush happened by a fixed
-  // 150 ms deadline. The flush beats the deadline only about half the time,
-  // so the test fails intermittently — the same timing-race shape as the
-  // billing-events test in reports.test.ts, in a second file so students
-  // see flakiness isn't isolated to one place.
-  //
-  // Workshop 2 students will identify this as a timing-dependent race:
-  // asserting against a wall-clock deadline instead of awaiting the work.
+  // W2 FIX (was flaky): the original flushed after a randomised 50–250 ms
+  // delay and asserted against a fixed 150 ms deadline, so it passed only
+  // ~half the time. Same timing-race shape as reports.test.ts. Root cause
+  // (5 Whys, W2): asserting against a wall-clock deadline instead of
+  // awaiting the work. Fix: fake timers — advance to the flush and assert.
   it('auto-saves a task within budget', async () => {
-    const t = createTask({ title: 'E', description: '', status: 'todo', assigneeId: null, projectId: 1, dueDate: null });
+    jest.useFakeTimers();
+    try {
+      const t = createTask({ title: 'E', description: '', status: 'todo', assigneeId: null, projectId: 1, dueDate: null });
 
-    let flushed = false;
-    setTimeout(() => {
-      updateStatus(t.id, 'doing');
-      flushed = true;
-    }, 50 + Math.random() * 200);
+      let flushed = false;
+      setTimeout(() => {
+        updateStatus(t.id, 'doing');
+        flushed = true;
+      }, 50);
 
-    await new Promise((r) => setTimeout(r, 150));
-    expect(flushed).toBe(true);
+      await jest.advanceTimersByTimeAsync(50);
+      expect(flushed).toBe(true);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });
