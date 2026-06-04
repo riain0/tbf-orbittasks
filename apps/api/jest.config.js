@@ -33,6 +33,12 @@ module.exports = {
   // SLOW: nothing cached between runs.
   // (Deliberately omitting cacheDirectory.)
 
+  // W5 step 3: stub the SDK transport (global fetch) in-process so tests
+  // never make real HTTP. The mock server below is no longer on the hot
+  // path; it's left wired so the suite still works if you remove this line
+  // to demo the slow baseline.
+  setupFiles: ['<rootDir>/tests/setup/mockFetch.ts'],
+
   globalSetup: '<rootDir>/tests/setup/globalSetup.js',
   globalTeardown: '<rootDir>/tests/setup/globalTeardown.js',
 
