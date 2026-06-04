@@ -21,8 +21,8 @@ module.exports = {
   roots: ['<rootDir>/tests'],
   testMatch: ['**/*.test.ts'],
 
-  // SLOW: only one worker.
-  maxWorkers: 1,
+  // W3 step 4: fan out across workers (was maxWorkers: 1).
+  maxWorkers: '50%',
 
   // W3 step 3: coverage off the PR path; run it nightly instead
   // (.github/workflows/coverage.yml). Override on demand: jest --coverage.
