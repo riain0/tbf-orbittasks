@@ -37,8 +37,10 @@ export default defineConfig({
       },
     },
 
-    // W3 step 4: reuse the jsdom environment across files (was isolate:true).
-    isolate: false,
+    // W3 step 4: keep per-file isolation (isolate:true). The parallelism win
+    // comes from singleFork:false; flipping isolate:false too over-shares the
+    // jsdom document across files in a fork and breaks queries here.
+    isolate: true,
 
     // W3 step 3: coverage off the PR path; run it nightly instead.
     coverage: {
