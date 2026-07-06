@@ -16,8 +16,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'w*']
   pull_request:
+  workflow_dispatch:
 
 jobs:
   # Coordinator: warms the npm cache and gives the matrix jobs a single
