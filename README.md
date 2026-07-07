@@ -2,6 +2,11 @@
 
 A lightweight project management SaaS — and the case study for the Build Fellowship's "Ship Better Code, Faster: Optimize Developer Workflows with CI/CD and AI" course. Over 8 workshops, you'll measure this codebase, find the bottlenecks, and ship real improvements.
 
+## Live demo
+
+A hosted instance runs at [tbf.riaincondon.com](https://tbf.riaincondon.com).
+Log in with `demo@orbittasks.local` / `Password123`.
+
 ## The codebase
 
 ```
