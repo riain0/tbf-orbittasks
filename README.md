@@ -21,7 +21,7 @@ Log in with `demo@orbittasks.local` / `Password123`.
 
 ## Continuous integration
 
-A slow GitHub Actions workflow ships at [`.github/workflows/ci.yml`](./.github/workflows/ci.yml). It runs on every push and PR. The baseline duration is ~3–5 minutes; the optimization arc in Workshop 3 brings it down to ~30 seconds.
+A slow GitHub Actions workflow ships at [`.github/workflows/ci.yml`](./.github/workflows/ci.yml). It runs on every push and PR. The baseline duration is ~13 minutes; the optimization arc in Workshops 3–5 brings it down to ~2 minutes.
 
 ## Setup
 
