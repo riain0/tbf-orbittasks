@@ -20,7 +20,8 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "typescript": "^5.4.5",
-    "tsx": "^4.7.1"
+    "@types/jest": "^30.0.0",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.5"
   }
 }
